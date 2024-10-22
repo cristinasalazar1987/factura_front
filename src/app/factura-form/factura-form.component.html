@@ -1,0 +1,86 @@
+<div class="container my-5">
+  <h2 class="text-center mb-4">Gestión de Facturas</h2>
+  
+  <!-- Formulario para crear una factura -->
+  <form [formGroup]="facturaForm" (ngSubmit)="crearFactura()" class="mb-4">
+    <!-- Crear Cliente -->
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="cliente">Crear Cliente</label>
+        <input type="text" class="form-control" formControlName="nombreCliente" placeholder="Nombre del Cliente" required>
+      </div>
+
+      <!-- Seleccionar Proveedor -->
+      <div class="form-group col-md-6">
+        <label for="proveedor">Proveedor</label>
+        <select class="form-control" formControlName="idProveedor" required>
+          <option *ngFor="let proveedor of proveedores" [value]="proveedor.idProveedor">{{ proveedor.nombreProveedor }}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Detalle de la Factura -->
+    <h3 class="mb-3">Detalle de Factura</h3>
+    <div formArrayName="detalles">
+      <div *ngFor="let detalle of facturaDetalles.controls; let i = index">
+        <div [formGroupName]="i" class="form-row">
+          <!-- Seleccionar Producto -->
+          <div class="form-group col-md-4">
+            <label for="producto">Producto</label>
+            <select formControlName="idProducto" class="form-control">
+              <option *ngFor="let producto of productos" [value]="producto.idProducto">{{ producto.nombreProducto }}</option>
+            </select>
+          </div>
+          
+          <!-- Ingresar Cantidad -->
+          <div class="form-group col-md-3">
+            <label for="cantidad">Cantidad</label>
+            <input type="number" formControlName="cantidad" class="form-control" min="1">
+          </div>
+          
+          <!-- Mostrar Precio del Producto -->
+          <div class="form-group col-md-3">
+            <label for="precio">Precio</label>
+            <input type="number" formControlName="precio" class="form-control" readonly>
+          </div>
+
+          <!-- Botón para eliminar el producto -->
+          <div class="form-group col-md-2 d-flex align-items-center justify-content-center">
+            <button type="button" class="btn btn-danger" (click)="eliminarProducto(i)">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Botón para agregar más productos -->
+    <button type="button" class="btn btn-info mt-3" (click)="agregarProducto()">Agregar Producto</button>
+
+    <!-- Botón para crear la factura -->
+    <button type="submit" class="btn btn-success mt-3">Crear Factura</button>
+  </form>
+
+  <!-- Lista de Facturas -->
+  <h3 class="mb-3">Lista de Facturas</h3>
+  <table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>ID</th>
+        <th>Cliente</th>
+        <th>Proveedor</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let factura of facturas">
+        <td>{{ factura.idFactura }}</td>
+        <td>{{ factura.nombreCliente }}</td>
+        <td>{{ factura.nombreProveedor }}</td>
+        <td>
+          <button (click)="actualizarFactura(factura.idFactura!)" class="btn btn-primary btn-sm">Editar</button>
+          <button (click)="eliminarFactura(factura.idFactura!)" class="btn btn-danger btn-sm">Eliminar</button>
+          <button (click)="generarPDF(factura)" class="btn btn-info btn-sm">Generar PDF</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
